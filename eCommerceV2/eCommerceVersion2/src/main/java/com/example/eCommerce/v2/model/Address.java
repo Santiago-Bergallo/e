@@ -3,6 +3,7 @@ package com.example.eCommerce.v2.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "address")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -10,57 +11,37 @@ public class Address {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private LocalUser user;
-
-    @Column(name = "active")
-    private Boolean active;
+    @JoinColumn(name = "local_user_id", nullable = false)
+    private LocalUser localUser;
 
     @Column(name = "post_code")
-    private Integer postCode;
+    private String postCode;
 
     @Column(name = "country")
     private String country;
 
-    @Column(name = "city")
+    @Column(name = "city", nullable = false)
     private String city;
 
     @Column(name = "address_line_2")
     private String addressLine2;
 
-    @Column(name = "address_line_1", nullable = false)
+    @Column(name = "address_line_1")
     private String addressLine1;
 
-
-    public LocalUser getUser() {
-        return user;
+    public LocalUser getLocalUser() {
+        return localUser;
     }
 
-    public void setUser(LocalUser user) {
-        this.user = user;
+    public void setLocalUser(LocalUser localUser) {
+        this.localUser = localUser;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public Integer getPostCode() {
+    public String getPostCode() {
         return postCode;
     }
 
-    public void setPostCode(Integer postCode) {
+    public void setPostCode(String postCode) {
         this.postCode = postCode;
     }
 
@@ -95,4 +76,13 @@ public class Address {
     public void setAddressLine1(String addressLine1) {
         this.addressLine1 = addressLine1;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 }

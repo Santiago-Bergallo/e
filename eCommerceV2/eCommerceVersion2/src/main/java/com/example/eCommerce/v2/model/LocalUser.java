@@ -13,22 +13,22 @@ public class LocalUser {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "last_name", nullable = false, length = 512)
+    private String lastName;
+
+    @Column(name = "first_name", nullable = false, length = 512)
+    private String firstName;
+
+    @Column(name = "username", nullable = false, length = 512)
+    private String username;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "password", nullable = false, length = 1000)
     private String password;
 
-    @Column(name = "last_name")
-    private String lastName;
-
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "username")
-    private String username;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "localUser", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
     public List<Address> getAddresses() {
@@ -37,23 +37,6 @@ public class LocalUser {
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
-    }
-
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public String getEmail() {
@@ -70,6 +53,22 @@ public class LocalUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getUsername() {

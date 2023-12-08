@@ -10,20 +10,28 @@ public class Product {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "price", nullable = false)
-    private Integer price;
+    @OneToOne(mappedBy = "product", orphanRemoval = true)
+    private Inventory inventory;
 
-    @Column(name = "long_description")
-    private String longDescription;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name = "short_description")
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @Column(name = "short_description", nullable = false)
     private String shortDescription;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Inventory inventory;
+    @Column(name = "price", nullable = false)
+    private Double price;
 
     public Inventory getInventory() {
         return inventory;
@@ -33,20 +41,12 @@ public class Product {
         this.inventory = inventory;
     }
 
-    public Integer getPrice() {
-        return price;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getShortDescription() {
@@ -65,12 +65,11 @@ public class Product {
         this.name = name;
     }
 
-    public Long getId() {
-        return id;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPrice(Double price) {
+        this.price = price;
     }
-
 }

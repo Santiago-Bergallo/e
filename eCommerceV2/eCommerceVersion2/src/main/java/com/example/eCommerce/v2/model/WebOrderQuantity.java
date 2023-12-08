@@ -3,19 +3,12 @@ package com.example.eCommerce.v2.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "web_order_quantities")
-public class WebOrderQuantities {
+@Table(name = "web_order_quantity")
+public class WebOrderQuantity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "web_order_id", nullable = false)
@@ -27,22 +20,6 @@ public class WebOrderQuantities {
 
     public void setWebOrder(WebOrder webOrder) {
         this.webOrder = webOrder;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public Long getId() {
