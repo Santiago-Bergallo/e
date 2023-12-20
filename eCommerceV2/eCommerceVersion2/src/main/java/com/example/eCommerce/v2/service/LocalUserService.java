@@ -22,7 +22,7 @@ public class LocalUserService {
     LocalUserDao localUserDao;
 
     @Autowired
-    AddressDao addressDao;
+    EncryptionService encryptionService;
 
     public LocalUser registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException{
 
@@ -47,7 +47,7 @@ public class LocalUserService {
     newUser.setFirstName(registrationBody.getFirstName());
     newUser.setLastName(registrationBody.getLastName());
     newUser.setEmail(registrationBody.getEmail());
-    newUser.setPassword(registrationBody.getPassword());
+    newUser.setPassword(encryptionService.EncryptPassword(registrationBody.getPassword()));
     newUser.setUsername(registrationBody.getUsername());
 
     localUserDao.save(newUser);
