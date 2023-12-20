@@ -28,7 +28,7 @@ public class LocalUser {
     @Column(name = "password", nullable = false, length = 1000)
     private String password;
 
-    @OneToMany(mappedBy = "localUser", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
     public List<Address> getAddresses() {
