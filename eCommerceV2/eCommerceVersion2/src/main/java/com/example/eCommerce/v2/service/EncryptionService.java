@@ -8,10 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class EncryptionService {
 
-    @Value("${Encryption.salt.round}")
+    @Value("${encryption.salt.rounds}")
     private int saltRounds;
 
-    @Value("${Encryption.salt}")
     private String salt;
 
     @PostConstruct

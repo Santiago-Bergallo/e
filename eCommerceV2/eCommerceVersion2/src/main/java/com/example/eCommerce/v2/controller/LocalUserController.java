@@ -1,5 +1,7 @@
 package com.example.eCommerce.v2.controller;
 
+import com.example.eCommerce.v2.Dto.LoginBody;
+import com.example.eCommerce.v2.Dto.LoginResponse;
 import com.example.eCommerce.v2.Dto.RegistrationBody;
 import com.example.eCommerce.v2.exceptions.UserAlreadyExistsException;
 import com.example.eCommerce.v2.exceptions.UserNotFoundException;
@@ -41,6 +43,17 @@ public class LocalUserController {
             System.out.println(e.message() + id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PostMapping("/login")
+    ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginBody loginBody) {
+        if (localUserService.login(loginBody) != null) {
+            String jwt = localUserService.login(loginBody);
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setJwt(jwt);
+            return ResponseEntity.ok(loginResponse);
+        }
+        else {return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
     @GetMapping("/users")

@@ -1,5 +1,6 @@
 package com.example.eCommerce.v2.service;
 
+import com.example.eCommerce.v2.Dto.LoginBody;
 import com.example.eCommerce.v2.Dto.RegistrationAddress;
 import com.example.eCommerce.v2.Dto.RegistrationBody;
 import com.example.eCommerce.v2.exceptions.UserAlreadyExistsException;
@@ -23,6 +24,9 @@ public class LocalUserService {
 
     @Autowired
     EncryptionService encryptionService;
+
+    @Autowired
+    JWTService jwtService;
 
     public LocalUser registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException{
 
@@ -65,6 +69,21 @@ public class LocalUserService {
     public List<LocalUser> listUsers() {
         return localUserDao.findAll();
     }
+
+    public String login(LoginBody loginBody) {
+        Optional<LocalUser> opuser = localUserDao.findByUsernameIgnoreCase(loginBody.getUsername());
+        if (opuser.isPresent()) {
+            LocalUser user = opuser.get();
+            if (encryptionService.checkPassword(loginBody.getPassword(), user.getPassword())) {
+                return jwtService.CreateJWT(user);
+            }
+
+        }
+        else{
+            return null;
+        }
+    return null;
+    };
 
 
 }
