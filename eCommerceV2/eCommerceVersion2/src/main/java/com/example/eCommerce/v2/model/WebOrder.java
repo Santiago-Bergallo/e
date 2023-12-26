@@ -21,7 +21,7 @@ public class WebOrder {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "inventory_id", nullable = false)
     private Inventory inventory;
 

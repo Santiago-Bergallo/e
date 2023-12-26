@@ -9,8 +9,10 @@ import com.example.eCommerce.v2.model.LocalUser;
 import com.example.eCommerce.v2.service.LocalUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,6 +56,11 @@ public class LocalUserController {
             return ResponseEntity.ok(loginResponse);
         }
         else {return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+    }
+
+    @GetMapping("/me")
+    public LocalUser loggedInUser(@AuthenticationPrincipal LocalUser user){
+        return user;
     }
 
     @GetMapping("/users")

@@ -1,5 +1,6 @@
 package com.example.eCommerce.v2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.LinkedHashSet;
@@ -21,9 +22,13 @@ public class Inventory {
         this.id = id;
     }
 
+    @JsonIgnore
     @OneToOne(optional = false, orphanRemoval = true)
     @JoinColumn(name = "product_id", nullable = false, unique = true)
     private Product product;
+
+    @Column(name = "product_quantity", nullable = false)
+    private Integer quantity;
 
     public Product getProduct() {
         return product;
