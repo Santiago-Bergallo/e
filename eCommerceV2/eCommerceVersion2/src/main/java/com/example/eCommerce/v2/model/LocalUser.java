@@ -34,6 +34,29 @@ public class LocalUser {
     @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<VerificationToken> verificationTokens = new ArrayList<>();
+
+    @Column(name = "is_email_verified", nullable = false)
+    private Boolean isEmailVerified = false;
+
+    public Boolean getIsEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setIsEmailVerified(Boolean isEmailVerified) {
+        this.isEmailVerified = isEmailVerified;
+    }
+
+    public List<VerificationToken> getVerificationTokens() {
+        return verificationTokens;
+    }
+
+    public void setVerificationTokens(List<VerificationToken> verificationTokens) {
+        this.verificationTokens = verificationTokens;
+    }
+
     public List<Address> getAddresses() {
         return addresses;
     }
@@ -90,4 +113,11 @@ public class LocalUser {
         this.id = id;
     }
 
+    public Boolean getEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        isEmailVerified = emailVerified;
+    }
 }

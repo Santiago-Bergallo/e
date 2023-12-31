@@ -6,4 +6,6 @@ import lombok.Setter;
 @Getter @Setter
 public class LoginResponse {
     String jwt;
+    private boolean success;
+    private String failure;
 }

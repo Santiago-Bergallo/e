@@ -3,8 +3,10 @@ package com.example.eCommerce.v2.controller;
 import com.example.eCommerce.v2.Dto.LoginBody;
 import com.example.eCommerce.v2.Dto.LoginResponse;
 import com.example.eCommerce.v2.Dto.RegistrationBody;
+import com.example.eCommerce.v2.exceptions.EmailFailureException;
 import com.example.eCommerce.v2.exceptions.UserAlreadyExistsException;
 import com.example.eCommerce.v2.exceptions.UserNotFoundException;
+import com.example.eCommerce.v2.exceptions.UserNotVerifiedException;
 import com.example.eCommerce.v2.model.LocalUser;
 import com.example.eCommerce.v2.service.LocalUserService;
 import jakarta.validation.Valid;
@@ -24,7 +26,7 @@ public class LocalUserController {
     LocalUserService localUserService;
 
 
-    @PostMapping("/save")
+    @PostMapping("/register")
     ResponseEntity<LocalUser> saveUser(@Valid @RequestBody RegistrationBody registrationBody) {
         try {
             localUserService.registerUser(registrationBody);
@@ -32,6 +34,8 @@ public class LocalUserController {
         }
         catch (UserAlreadyExistsException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (EmailFailureException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -49,13 +53,27 @@ public class LocalUserController {
 
     @PostMapping("/login")
     ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginBody loginBody) {
-        if (localUserService.login(loginBody) != null) {
-            String jwt = localUserService.login(loginBody);
+        try {
+            if (localUserService.login(loginBody) != null) {
+                String jwt = localUserService.login(loginBody);
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setJwt(jwt);
+                loginResponse.setSuccess(true);
+                return ResponseEntity.ok(loginResponse);
+            }
+            else {return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+        } catch (EmailFailureException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (UserNotVerifiedException e) {
             LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setJwt(jwt);
-            return ResponseEntity.ok(loginResponse);
+            loginResponse.setSuccess(false);
+            String reason = "EMAIL_NOT_VERIFIED";
+            if (e.isNewEmailSent()) {
+                reason += "_EMAIL_RESENT";
+            }
+            loginResponse.setFailure(reason);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(loginResponse);
         }
-        else {return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
     @GetMapping("/me")
