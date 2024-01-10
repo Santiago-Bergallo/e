@@ -11,6 +11,8 @@ import com.example.eCommerce.v2.model.Address;
 import com.example.eCommerce.v2.model.LocalUser;
 import com.example.eCommerce.v2.model.VerificationToken;
 import com.example.eCommerce.v2.repository.LocalUserDao;
+import com.example.eCommerce.v2.repository.VerificationTokenDao;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,9 @@ public class LocalUserService {
 
     @Autowired
     LocalUserDao localUserDao;
+
+    @Autowired
+    VerificationTokenDao verificationTokenDao;
 
     @Autowired
     EncryptionService encryptionService;
@@ -40,8 +45,8 @@ public class LocalUserService {
             throw new UserAlreadyExistsException();
         }
 
-    LocalUser newUser = new LocalUser();
-        if (!registrationBody.getAddresses().isEmpty()){
+        LocalUser newUser = new LocalUser();
+        if (!registrationBody.getAddresses().isEmpty()) {
 
             RegistrationAddress registrationAddress = registrationBody.getAddresses().get(0);
 
@@ -54,17 +59,17 @@ public class LocalUserService {
             newUser.setAddresses(newAddresses);
 
         }
-    newUser.setFirstName(registrationBody.getFirstName());
-    newUser.setLastName(registrationBody.getLastName());
-    newUser.setEmail(registrationBody.getEmail());
-    newUser.setPassword(encryptionService.EncryptPassword(registrationBody.getPassword()));
-    newUser.setUsername(registrationBody.getUsername());
+        newUser.setFirstName(registrationBody.getFirstName());
+        newUser.setLastName(registrationBody.getLastName());
+        newUser.setEmail(registrationBody.getEmail());
+        newUser.setPassword(encryptionService.EncryptPassword(registrationBody.getPassword()));
+        newUser.setUsername(registrationBody.getUsername());
 
-    VerificationToken verificationToken = createVerificationToken(newUser);
-    emailService.verificationMessage(verificationToken);
+        VerificationToken verificationToken = createVerificationToken(newUser);
+        emailService.verificationMessage(verificationToken);
 
-    localUserDao.save(newUser);
-    return newUser;
+        localUserDao.save(newUser);
+        return newUser;
     }
 
     public VerificationToken createVerificationToken(LocalUser user) {
@@ -78,8 +83,9 @@ public class LocalUserService {
 
     public Optional<LocalUser> findUser(Long id) throws UserNotFoundException {
         Optional<LocalUser> user = localUserDao.findById(id);
-        if (user.isPresent()) {return user;}
-        else {
+        if (user.isPresent()) {
+            return user;
+        } else {
             throw new UserNotFoundException();
         }
     }
@@ -95,26 +101,38 @@ public class LocalUserService {
             if (encryptionService.checkPassword(loginBody.getPassword(), user.getPassword())) {
                 if (user.getEmailVerified()) {
                     return jwtService.CreateJWT(user);
-                }
-                else {
+                } else {
                     List<VerificationToken> tokens = user.getVerificationTokens();
                     boolean resend = user.getVerificationTokens().size() == 0 ||
                             tokens.get(0).getCreatedTimeStamp().before(new Timestamp(System.currentTimeMillis() - 60 * 60 * 1000));
                     if (resend) {
                         VerificationToken token = createVerificationToken(user);
-                        user.getVerificationTokens().add(token);
+                        verificationTokenDao.save(token);
                         emailService.verificationMessage(token);
                     }
                     throw new UserNotVerifiedException(resend);
                 }
             }
 
-        }
-        else{
+        } else {
             return null;
         }
-    return null;
+        return null;
     }
 
-
+    @Transactional
+    public boolean verifyUser(String token) {
+        Optional<VerificationToken> opToken = verificationTokenDao.findByToken(token);
+        if (opToken.isPresent()) {
+            VerificationToken verificationToken = opToken.get();
+            LocalUser user = verificationToken.getLocalUser();
+            if (!user.getEmailVerified()) {
+                user.setEmailVerified(true);
+                localUserDao.save(user);
+                verificationTokenDao.deleteByLocalUser(user);
+                return true;
+            }
+        }
+        return false;
+    }
 }

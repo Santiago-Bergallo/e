@@ -21,8 +21,18 @@ public class WebSecurityConfig  {
                 .cors().disable();
         http.addFilterBefore(jwtFilterRequest, AuthorizationFilter.class);
         http.authorizeHttpRequests()
-                .requestMatchers("/products", "/users", "/login", "/me").permitAll()
-                .anyRequest().authenticated();
+                .requestMatchers("/products", "/users", "/login", "/me", "/register", "/verify").permitAll()
+                .anyRequest().permitAll();
         return http.build();
     }
 }
+//    @Autowired
+//    JWTRequestFilter jwtRequestFilter;
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http.csrf().disable().cors().disable();
+//        http.addFilterBefore(jwtRequestFilter, AuthorizationFilter.class);
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/product", "/auth/login", "/auth/register", "/auth/verify").permitAll()
+//                .anyRequest().authenticated();
+//        return http.build();

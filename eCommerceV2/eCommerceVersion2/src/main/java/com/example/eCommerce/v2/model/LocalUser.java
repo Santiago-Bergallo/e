@@ -30,11 +30,11 @@ public class LocalUser {
     @Column(name = "password", nullable = false, length = 1000)
     private String password;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("id")
     private List<VerificationToken> verificationTokens = new ArrayList<>();
 

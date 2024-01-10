@@ -35,7 +35,7 @@ public class LocalUserController {
         catch (UserAlreadyExistsException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (EmailFailureException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -53,16 +53,11 @@ public class LocalUserController {
 
     @PostMapping("/login")
     ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginBody loginBody) {
+        String jwt = null;
         try {
-            if (localUserService.login(loginBody) != null) {
-                String jwt = localUserService.login(loginBody);
-                LoginResponse loginResponse = new LoginResponse();
-                loginResponse.setJwt(jwt);
-                loginResponse.setSuccess(true);
-                return ResponseEntity.ok(loginResponse);
-            }
-            else {return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
-        } catch (EmailFailureException e) {
+           jwt = localUserService.login(loginBody);
+        }
+        catch (EmailFailureException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (UserNotVerifiedException e) {
             LoginResponse loginResponse = new LoginResponse();
@@ -73,6 +68,24 @@ public class LocalUserController {
             }
             loginResponse.setFailure(reason);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(loginResponse);
+        }
+            if (jwt == null) { return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+
+            else {
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setJwt(jwt);
+                loginResponse.setSuccess(true);
+                return ResponseEntity.ok(loginResponse);
+            }
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity verifyUser(@RequestParam String token) {
+        if (localUserService.verifyUser(token)){
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
