@@ -30,7 +30,7 @@ public class LocalUser {
     @Column(name = "password", nullable = false, length = 1000)
     private String password;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 

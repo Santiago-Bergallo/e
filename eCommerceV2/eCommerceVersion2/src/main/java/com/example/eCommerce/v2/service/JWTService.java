@@ -1,6 +1,8 @@
 package com.example.eCommerce.v2.service;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.eCommerce.v2.model.LocalUser;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +50,9 @@ public class JWTService {
                 .sign(algorithm);
     }
 
-    public String getUserName(String token) {
-        return JWT.decode(token).getClaim(USERNAME).asString();
+    public String getUserName(String token) throws JWTVerificationException {
+
+    DecodedJWT jwt = JWT.require(algorithm).withIssuer(issuer).build().verify(token);
+    return jwt.getClaim(USERNAME).asString();
     }
 }

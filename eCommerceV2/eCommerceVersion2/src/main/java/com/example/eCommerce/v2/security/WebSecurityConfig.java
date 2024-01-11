@@ -26,13 +26,3 @@ public class WebSecurityConfig  {
         return http.build();
     }
 }
-//    @Autowired
-//    JWTRequestFilter jwtRequestFilter;
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf().disable().cors().disable();
-//        http.addFilterBefore(jwtRequestFilter, AuthorizationFilter.class);
-//        http.authorizeHttpRequests()
-//                .requestMatchers("/product", "/auth/login", "/auth/register", "/auth/verify").permitAll()
-//                .anyRequest().authenticated();
-//        return http.build();

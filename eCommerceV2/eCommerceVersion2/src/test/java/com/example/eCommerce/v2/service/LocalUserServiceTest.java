@@ -21,6 +21,7 @@ public class LocalUserServiceTest {
     private static GreenMailExtension greenMailExtension = new GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig().withUser("springboot", "secret"))
             .withPerMethodLifecycle(true);
+
     @Autowired
     private LocalUserService userService;
 
@@ -47,6 +48,8 @@ public class LocalUserServiceTest {
         Assertions.assertEquals(registrationBody.getEmail(),
                 greenMailExtension.getReceivedMessages()[0].getRecipients(Message.RecipientType.TO)[0].toString());
     }
+
+
 
 
 }
